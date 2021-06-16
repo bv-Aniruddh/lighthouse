@@ -85,10 +85,8 @@ class Util {
     return Class
   }
   static prepareReportResult(result) {
-    // If any mutations happen to the report within the renderers, we want the original object untouched
-    const clone = /** @type {LH.ReportResult} */ (JSON.parse(
-      JSON.stringify(result)
-    ))
+    
+    const clone = (JSON.parse(JSON.stringify(result)))
 
     // If LHR is older (≤3.0.3), it has no locale setting. Set default.
     if (!clone.configSettings.locale) {

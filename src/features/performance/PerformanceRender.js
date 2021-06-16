@@ -37,24 +37,22 @@ const renderAudit = ( audit )=>{
           </div>
   )
 }
-const loadStackpacks = (audit) => {
-  if(!audit.stackPacks){
-    return 
+const loadStackpacks = ( audit ) => {
+  if( !audit.stackPacks ){
+    return null
   }
   const collection = []
   audit.stackPacks.forEach((pack) => {
     collection.push(
+      
       <div className="lh-audit__stackpack">
         <img className='lh-audit__stackpack__img' src={pack.iconDataURL} alt={pack.title}></img>
-        {DetailsRenderer.convertMarkdownLinkSnippets(pack.description)}
+        <span>{DetailsRenderer.convertMarkdownLinkSnippets(pack.description)}</span>
       </div>
+      
     )
   })
-  return(
-    <div className="lh-audit__stackpacks">
-      {collection}
-    </div>
-  )
+  return (<div className="lh-audit__stackpacks">{collection}</div>)
 }
 function _getWastedMs(audit){
     if ( audit.result.details && audit.result.details.type === 'opportunity' ) {

@@ -7,9 +7,15 @@ const initialState = {
 };
 
 export const fetchData  = createAsyncThunk("data/fetchData",async()=>{
-    const response = await fetch('http://localhost:8000/');
-    const result= await response.json();
-    return result;
+    try{
+        console.log('infetch')
+        const result = await fetch('http://localhost:8000/')
+        const response = await result.json()    
+        return response;
+    }
+    catch(e){
+        console.log(e)
+    }
 })
 
 const dataSlice = createSlice({
@@ -18,14 +24,18 @@ const dataSlice = createSlice({
     extraReducers:{
         [fetchData.pending]:(state , action) =>{
             state.status = "loading";
+            
         },
         [fetchData.rejected]:(state, action) => {
             state.status = "failed";
             state.error = action.error.message;
         },
         [fetchData.fulfilled]: (state,action) =>{
-            state.status= "succeeded";
-            state.lighthouseData = action.payload;
+            
+            if(action.payload && state.lighthouseData===null){
+                state.status= "succeeded";
+                state.lighthouseData = action.payload;
+            }
         }
     }
 })

@@ -1,5 +1,4 @@
-import React, { useEffect } from "react"
-import { useSelector, useDispatch } from "react-redux"
+import React from "react"
 import { fetchData } from "./features/data_slice_reducer"
 import './App.css'
 import {Lighthoseoverview} from "./features/lighouseoverview"
@@ -8,40 +7,14 @@ import {CategoryRenderer} from "./features/Category/CategoryRenderer"
 import Util from "./features/performance/utils"
 import I18n from "./features/performance/i18n"
 import {PwaRenderer} from "./features/Pwa/PwaRenderer"
-import ReportViewer from 'react-lighthouse-viewer';
+import {stringsArray} from "./il8n_strings"
+import {connect} from "react-redux"
 const renderList = (report) =>{
   const li= []
   const envValues = Util.getEnvironmentDisplayValues(
     report.configSettings || {}
   );
-  [
-    {
-      name: Util.i18n.strings.runtimeSettingsUrl,
-      description: report.finalUrl,
-    },
-    {
-      name: Util.i18n.strings.runtimeSettingsFetchTime,
-      description: Util.i18n.formatDateTime(report.fetchTime),
-    },
-    ...envValues,
-    {
-      name: Util.i18n.strings.runtimeSettingsChannel,
-      description: report.configSettings.channel,
-    },
-    {
-      name: Util.i18n.strings.runtimeSettingsUA,
-      description: report.userAgent,
-    },
-    {
-      name: Util.i18n.strings.runtimeSettingsUANetwork,
-      description: report.environment && report.environment.networkUserAgent,
-    },
-    {
-      name: Util.i18n.strings.runtimeSettingsBenchmark,
-      description:
-        report.environment && report.environment.benchmarkIndex.toFixed(0),
-    },
-  ].forEach((runtime) => {
+  stringsArray(report,envValues).forEach((runtime) => {
     if (!runtime.description) return
     li.push(
       <li className="lh-env__item">
@@ -52,58 +25,76 @@ const renderList = (report) =>{
   })
   return li
 }
-function App(){
-  const dispatch = useDispatch();
-  const data = useSelector( ( state )=> state.data.lighthouseData )
-  
-  const dataStatus = useSelector( ( state ) => state.data.status )
-  useEffect(()=>{
-    if( dataStatus === "idle"){
-      dispatch(fetchData());
+class App extends React.Component{
+  runFetch = () => this.props.fetchData()
+  render(){   
+  if (this.props.status==="idle" && this.props.lighthouseData===null && this.props.error===null){
+    console.log('inside')
+    try{
+      this.runFetch()
+    } catch(e){
+      console.log(e)
     }
-  },[dataStatus, dispatch]);
-  if(dataStatus === "succeeded"){
-    const report = Util.prepareReportResult(data);
+    
+  }   
+  if (this.props.lighthouseData){
+    console.log('succeeded')
+    const report = Util.prepareReportResult(this.props.lighthouseData)
+    const data = this.props.lighthouseData
     const i18n = new I18n(report.configSettings.locale, {
       ...Util.UIStrings,
       ...report.i18n.rendererFormattedStrings,
     });
     Util.i18n = i18n;
     Util.reportJson = report;
-    return(
-      
+    return (
     <React.Fragment>
       <div class="lh-container lh-root lh-vars lh-screenshot-overlay--enabled lh-narrow">  
 
-      <div class="lh-container">
-      <div class="lh-report">       
-      <Lighthoseoverview categories={data.categories}/>
-      <div class="lh-categories">
+        <div class="lh-container">
+          <div class="lh-report">       
+            <Lighthoseoverview categories={data.categories}/>
+            <div class="lh-categories">
         
-        <PerformanceRender/>
-        <CategoryRenderer id={data.categories.accessibility.id}/>
-        <CategoryRenderer id={data.categories.seo.id}/>
-        <CategoryRenderer id="best-practices"/>
-        <PwaRenderer/>
-      </div>
-      <footer className="lh-footer">
-        <div className="lh-env">
-          <div className="lh-env__title">Runtime Settings</div>
-          <ul className="lh-env__items" id="runtime-settings">
-            {renderList(report)}
-          </ul>
+              <PerformanceRender/>
+              <CategoryRenderer data= {report.categories['accessibility']} id ="accessibility" categoryGroups={report.categoryGroups}/>
+              <CategoryRenderer data= {report.categories['seo']} id ="seo" categoryGroups={report.categoryGroups}/>
+              <CategoryRenderer data = {report.categories['best-practices']} id = 'best-practices' categoryGroups={report.categoryGroups}/>
+              <PwaRenderer/>
+            </div>
+            <footer className="lh-footer">
+              <div className="lh-env">
+                <div className="lh-env__title">Runtime Settings</div>
+                <ul className="lh-env__items" id="runtime-settings">
+                  {renderList(report)}
+                </ul>
+              </div>
+            </footer>
+          </div>
         </div>
-      </footer>
-      </div>
-      </div>
       </div>  
     </React.Fragment>
     );
   }
   return (
     <p> Loading </p>
-  );
+  )
+}
 }
 
+const mapStateToProps = (state)=>{
+  const {data} = state
+  return({
+    lighthouseData: data.lighthouseData,
+    status: data.status,
+    error : data.error,
+  })
+}
+const mapDispatchToProps = {
+  fetchData
+}
 
-export default App;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App)
