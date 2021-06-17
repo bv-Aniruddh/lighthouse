@@ -8,7 +8,9 @@ import Util from "./features/performance/utils"
 import I18n from "./features/performance/i18n"
 import {PwaRenderer} from "./features/Pwa/PwaRenderer"
 import {stringsArray} from "./il8n_strings"
-import {connect} from "react-redux"
+import {connect} from "react-redux" 
+
+
 const renderList = (report) =>{
   const li= []
   const envValues = Util.getEnvironmentDisplayValues(
@@ -25,6 +27,8 @@ const renderList = (report) =>{
   })
   return li
 }
+
+//Main react component
 class App extends React.Component{
   runFetch = () => this.props.fetchData()
   render(){   
