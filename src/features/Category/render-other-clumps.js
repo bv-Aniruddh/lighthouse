@@ -1,8 +1,8 @@
 import React from "react"
-import Util from "../performance/utils"
-import DetailsRenderer from "../performance/details-renderer"
+import Util from "../utils"
+import DetailsRenderer from "../details-renderer"
 
-export class RenderOtherClumps extends React.Component{ 
+class RenderOtherClumps extends React.Component{ 
   loadStackpacks = ( audit ) => {
     if (!audit.stackPacks){
       return null
@@ -114,3 +114,5 @@ export class RenderOtherClumps extends React.Component{
     return (this.renderGroupAudits(clumps,this.props.description))
   }  
 }
+
+export default RenderOtherClumps

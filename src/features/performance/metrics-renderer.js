@@ -1,5 +1,5 @@
 import React from "react"
-export class MetricsRenderer extends React.Component{
+class MetricsRenderer extends React.Component{
   render(){
     const classMetrics = [];
     for(let i=0;i<6;i++){
@@ -94,3 +94,5 @@ export class MetricsRenderer extends React.Component{
   );
   }
 }
+
+export default MetricsRenderer

@@ -1,23 +1,16 @@
 import React from "react"
-import Util from "../performance/utils"
-import DetailsRenderer from "../performance/details-renderer"
+import Util from "../utils"
+import DetailsRenderer from "../details-renderer"
 import {useSelector} from "react-redux"
 const _getGroupIds = ( auditRefs ) =>{
     const groupIds = auditRefs
       .map((ref) => ref.group)
-      .filter(/** @return {g is string} */ (g) => !!g);
+      .filter((g) => !!g);
     return new Set(groupIds);
   }
 
-  /**
-   * Returns the group IDs whose audits are all considered passing.
-   * @param {Array<LH.ReportResult.AuditRef>} auditRefs
-   * @return {Set<string>}
-   */
 const _getPassingGroupIds = ( auditRefs )=>{
     const uniqueGroupIds = _getGroupIds(auditRefs);
-
-    // Remove any that have a failing audit.
     for (const auditRef of auditRefs) {
       if (!Util.showAsPassed(auditRef.result) && auditRef.group) {
         uniqueGroupIds.delete(auditRef.group);
@@ -82,7 +75,6 @@ const getClassNameForGroup = ( groupId,regularAuditRefs ) => {
         return `lh-audit-group lh-audit-group--${groupId} lh-badged`
     }
     return `lh-audit-group lh-audit-group--${groupId}`
-
 }
 const renderGroupAudits = ( grouped,groups,regularAuditRefs )=>{
     const auditsGroups = []
@@ -106,7 +98,7 @@ const renderDescription = ( description,clumpId ) =>{
       <span class="lh-audit-group__description">{DetailsRenderer.convertMarkdownLinkSnippets(description)}</span>
     )
   }
-export const PwaRenderer = ( props ) =>{
+const PwaRenderer = ( props ) =>{
     const data = useSelector((state)=>state.data.lighthouseData);
     const clone = (JSON.parse(JSON.stringify(data)));
     for (const category of Object.values(clone.categories)) {
@@ -242,3 +234,4 @@ export const PwaRenderer = ( props ) =>{
         </div>
     )
 }
+export default PwaRenderer

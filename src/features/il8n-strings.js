@@ -1,4 +1,4 @@
-import Util from "./features/performance/utils"
+import Util from "./utils"
 export const stringsArray = (report,envValues)=>{return([
     {
       name: Util.i18n.strings.runtimeSettingsUrl,

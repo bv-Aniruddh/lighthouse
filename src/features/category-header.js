@@ -1,7 +1,7 @@
 import React from "react"
 import DetailsRenderer from "./details-renderer"
 
-export class CategoryHeader extends React.Component{
+class CategoryHeader extends React.Component{
   getDescription = () =>{
     if( !this.props.category.description ){
         return null;
@@ -45,3 +45,5 @@ export class CategoryHeader extends React.Component{
     )
   }    
 }
+
+export default CategoryHeader

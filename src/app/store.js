@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import dataReducer from "../features/data_slice_reducer"
+import dataReducer from "../features/data-slice-reducer"
 import { getDefaultMiddleware } from '@reduxjs/toolkit'
 export default configureStore({
   reducer:{

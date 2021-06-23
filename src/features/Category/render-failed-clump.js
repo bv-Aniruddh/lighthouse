@@ -1,8 +1,8 @@
 import React from "react"
-import Util from "../performance/utils"
-import DetailsRenderer from "../performance/details-renderer"
+import Util from "../utils"
+import DetailsRenderer from "../details-renderer"
 
-export class RenderFailedClump extends React.Component{
+class RenderFailedClump extends React.Component{
   renderGroupAudits = (grouped,groups)=>{
     const failedAuditsGroups = []
 
@@ -102,3 +102,5 @@ export class RenderFailedClump extends React.Component{
     )
   }  
 }
+
+export default RenderFailedClump

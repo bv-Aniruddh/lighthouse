@@ -1,9 +1,9 @@
 import React from "react"
 import '../App.css'
-import {LighthouseScores} from "./lighthouseScores"
-export class Lighthoseoverview extends React.Component{
-  render(){
-    return (
+import LighthouseScores from "./lighthouse-scores"
+class Lighthouseoverview extends React.Component{
+    render(){
+      return (
         <div class="lh-container lh-root lh-vars lh-screenshot-overlay--enabled lh-narrow">
           <div class="lh-header-container">
             <div class="lh-scores-wrapper">
@@ -30,6 +30,8 @@ export class Lighthoseoverview extends React.Component{
             </div>
           </div>
         </div> 
-    )
-  }  
+      )
+    }  
 }
+
+export default Lighthouseoverview

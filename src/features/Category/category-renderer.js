@@ -1,10 +1,10 @@
 import React from "react"
-import {RenderFailedClump} from "./RenderFailedClump"
-import {RenderOtherClumps} from "./RenderOtherClumps"
-import {CategoryHeader} from "../performance/CategoryHeader"
-import Util from "../performance/utils"
+import RenderFailedClump from "./render-failed-clump"
+import RenderOtherClumps from "./render-other-clumps"
+import CategoryHeader from "../category-header"
+import Util from "../utils"
 
-export class CategoryRenderer extends React.Component{
+class CategoryRenderer extends React.Component{
   _getClumpIdForAuditRef(auditRef) {
     const scoreDisplayMode = auditRef.result.scoreDisplayMode;
     if (scoreDisplayMode === 'manual' || scoreDisplayMode === 'notApplicable') {
@@ -57,3 +57,5 @@ export class CategoryRenderer extends React.Component{
     )
   }   
 }
+
+export default CategoryRenderer

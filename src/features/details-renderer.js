@@ -2,10 +2,6 @@ import React from "react"
 
 import Util from "./utils"
 
-/* globals self CriticalRequestChainRenderer SnippetRenderer Util URL */
-
-/** @typedef {import('./dom.js')} DOM */
-
 const URL_PREFIXES = ['http://', 'https://', 'data:'];
 
 class DetailsRenderer {
@@ -35,8 +31,7 @@ static convertMarkdownLinkSnippets(text) {
         )
         continue;
       }
-
-      // Otherwise, append any links found.
+      
       const url = new URL(segment.linkHref);
 
       const DOCS_ORIGINS = ['https://developers.google.com', 'https://web.dev'];
@@ -63,10 +58,6 @@ static convertMarkdownLinkSnippets(text) {
     )
   }
 
-  /**
-   * @param {{value: number, granularity?: number, displayUnit?: string}} details
-   * @return {Element}
-   */
   static _renderMilliseconds(details) {
       let value = Util.i18n.formatMilliseconds(
       details.value,
@@ -79,10 +70,6 @@ static convertMarkdownLinkSnippets(text) {
     return DetailsRenderer._renderText(value);
   }
 
-  /**
-   * @param {string} text
-   * @return {HTMLElement}
-   */
   static displayedHostFunc(displayedHost){
     if (displayedHost){
       return(<div className="lh-text lh-text__url-host">{displayedHost}</div>)
@@ -111,10 +98,6 @@ static convertMarkdownLinkSnippets(text) {
     )
   }
 
-  /**
-   * @param {{text: string, url: string}} details
-   * @return {Element}
-   */
   static _renderLink(details,line=null,column=null) {
     const allowedProtocols = ['https:', 'http:'];
     let url;
@@ -123,7 +106,6 @@ static convertMarkdownLinkSnippets(text) {
     } catch (_) {}
 
     if (!url || !allowedProtocols.includes(url.protocol)) {
-      // Fall back to just the link text if invalid or protocol not allowed.
       return DetailsRenderer._renderText(details.text);
     }
     if(line && column){
@@ -137,10 +119,6 @@ static convertMarkdownLinkSnippets(text) {
     )
   }
 
-  /**
-   * @param {string} text
-   * @return {HTMLDivElement}
-   */
   static _renderText(text,Class='') {
     const className='lh-text '+Class; 
     return(
@@ -148,10 +126,6 @@ static convertMarkdownLinkSnippets(text) {
     )
   }
 
-  /**
-   * @param {{value: number, granularity?: number}} details
-   * @return {Element}
-   */
   static _renderNumeric(details) {
     const value = Util.i18n.formatNumber(details.value, details.granularity);
     return (
@@ -161,21 +135,12 @@ static convertMarkdownLinkSnippets(text) {
     )
   }
 
-  /**
-   * Create small thumbnail with scaled down image asset.
-   * @param {string} details
-   * @return {Element}
-   */
   static _renderThumbnail(details) {
     return (
       <img className="lh-thumbnail" src={details} title={details} alt=""></img>
     )
   }
 
-  /**
-   * @param {string} type
-   * @param {*} value
-   */
   static _renderUnknown(type, value) {
     const Summary=`We don't know how to render audit details of type \`${type}\`. ` +
       'The Lighthouse version that collected this data is likely newer than the Lighthouse ' +
@@ -193,9 +158,8 @@ static convertMarkdownLinkSnippets(text) {
       return null;
     }
 
-    // First deal with the possible object forms of value.
     if (typeof value === 'object') {
-      // The value's type overrides the heading's for this column.
+      
       switch (value.type) {
         case 'code': {
           return DetailsRenderer._renderCode(value.value);
@@ -214,8 +178,6 @@ static convertMarkdownLinkSnippets(text) {
         }
       }
     }
-
-    // Next, deal withDetailsRenderer. primitives
     switch (heading.valueType) {
       case 'bytes': {
         const numValue = Number(value);
@@ -241,7 +203,7 @@ static convertMarkdownLinkSnippets(text) {
         return DetailsRenderer._renderNumeric({
           value: numValue,
           granularity: heading.granularity,
-        });
+        })
       }
       case 'text': {
         const strValue = String(value);
@@ -260,7 +222,7 @@ static convertMarkdownLinkSnippets(text) {
         if (URL_PREFIXES.some((prefix) => strValue.startsWith(prefix))) {
           return DetailsRenderer.renderTextURL(strValue);
         } else {
-          // Fall back to <pre> rendering if not actually a URL.
+          
           return DetailsRenderer._renderCode(strValue);
         }
       }
@@ -269,14 +231,6 @@ static convertMarkdownLinkSnippets(text) {
       }
     }
   }
-
-  /**
-   * Get the headings of a table-like details object, converted into the
-   * OpportunityColumnHeading type until we have all details use the same
-   * heading format.
-   * @param {LH.Audit.Details.Table|LH.Audit.Details.Opportunity} tableLike
-   * @return {Array<LH.Audit.Details.OpportunityColumnHeading>}
-   */
   static _getCanonicalizedHeadingsFromTable(tableLike) {
     if (tableLike.type === 'opportunity') {
       return tableLike.headings;
@@ -287,13 +241,6 @@ static convertMarkdownLinkSnippets(text) {
     );
   }
 
-  /**
-   * Get the headings of a table-like details object, converted into the
-   * OpportunityColumnHeading type until we have all details use the same
-   * heading format.
-   * @param {LH.Audit.Details.TableColumnHeading} heading
-   * @return {LH.Audit.Details.OpportunityColumnHeading}
-   */
   static _getCanonicalizedHeading(heading) {
     let subItemsHeading;
     if (heading.subItemsHeading) {
@@ -313,16 +260,10 @@ static convertMarkdownLinkSnippets(text) {
     };
   }
 
-  /**
-   * @param {Exclude<LH.Audit.Details.TableColumnHeading['subItemsHeading'], undefined>} subItemsHeading
-   * @param {LH.Audit.Details.TableColumnHeading} parentHeading
-   * @return {LH.Audit.Details.OpportunityColumnHeading['subItemsHeading']}
-   */
   static _getCanonicalizedsubItemsHeading(subItemsHeading, parentHeading) {
-    // Low-friction way to prevent commiting a falsy key (which is never allowed for
-    // a subItemsHeading) from passing in CI.
+    
     if (!subItemsHeading.key) {
-      // eslint-disable-next-line no-console
+      
       console.warn('key should not be null');
     }
 
@@ -334,13 +275,6 @@ static convertMarkdownLinkSnippets(text) {
     };
   }
 
-  /**
-   * Returns a new heading where the values are defined first by `heading.subItemsHeading`,
-   * and secondly by `heading`. If there is no subItemsHeading, returns null, which will
-   * be rendered as an empty column.
-   * @param {LH.Audit.Details.OpportunityColumnHeading} heading
-   * @return {LH.Audit.Details.OpportunityColumnHeading | null}
-   */
   static _getDerivedsubItemsHeading(heading) {
     if (!heading.subItemsHeading) return null;
     return {
@@ -349,7 +283,7 @@ static convertMarkdownLinkSnippets(text) {
       granularity: heading.subItemsHeading.granularity || heading.granularity,
       displayUnit: heading.subItemsHeading.displayUnit || heading.displayUnit,
       label: '',
-    };
+    }
   }
   static renderTableHeader(details){
     if(!details) return null;
@@ -405,31 +339,6 @@ static convertMarkdownLinkSnippets(text) {
       )))
   }
 
-  /**
-   * @param {LH.Audit.Details.List} details
-   * @return {Element}
-   */
-  /*
-   _renderList(details) {
-    const listContainer = this._dom.createElement('div', 'lh-list');
-
-    details.items.forEach((item) => {
-      const snippetEl = SnippetRenderer.render(
-        this._dom,
-        this._templateContext,
-        item,
-        this
-      );
-      listContainer.appendChild(snippetEl);
-    });
-
-    return listContainer;
-  }
-
-  /**
-   * @param {LH.Audit.Details.NodeValue} item
-   * @return {Element}
-   */
   static nodeFunction(nodeLabel){
     if(!nodeLabel) {
       return(
@@ -454,44 +363,12 @@ static convertMarkdownLinkSnippets(text) {
 
       </span>
     )
-    /*
-    const element = this._dom.createElement('span', 'lh-node');
-    if (item.nodeLabel) {
-      const nodeLabelEl = this._dom.createElement('div');
-      nodeLabelEl.textContent = item.nodeLabel;
-      element.appendChild(nodeLabelEl);
-    }
-
-    if (item.snippet) {
-      const snippetEl = this._dom.createElement('div');
-      snippetEl.classList.add('lh-node__snippet');
-      snippetEl.textContent = item.snippet;
-      element.appendChild(snippetEl);
-    }
-    if (item.selector) {
-      element.title = item.selector;
-    }
-    if (item.path) element.setAttribute('data-path', item.path);
-    if (item.selector) element.setAttribute('data-selector', item.selector);
-    if (item.snippet) element.setAttribute('data-snippet', item.snippet);
-
-    return element;
-    */
   }
-
-  /**
-   * @param {LH.Audit.Details.SourceLocationValue} item
-   * @return {Element|null}
-   * @protected
-   * 
-   */
-  
   static renderSourceLocation(item) {
     if (!item.url) {
       return(<div></div>)
     }
 
-    // Lines are shown as one-indexed.
     const line = item.line + 1;
     const column = item.column;
     if (item.urlProvider === 'network') {
@@ -501,42 +378,7 @@ static convertMarkdownLinkSnippets(text) {
         `${item.url}:${line}:${column} (from sourceURL)`,'lh-source-location'
       );
     }
-    /*
-    element.classList.add('lh-source-location');
-    element.setAttribute('data-source-url', item.url);
-    // DevTools expects zero-indexed lines.
-    element.setAttribute('data-source-line', String(item.line));
-    element.setAttribute('data-source-column', String(item.column));
-    return element;
-    */
   }
-
-  /**
-   * @param {LH.Audit.Details.Filmstrip} details
-   * @return {Element}
-   */
-  /*
-  _renderFilmstrip(details) {
-    const filmstripEl = this._dom.createElement('div', 'lh-filmstrip');
-
-    for (const thumbnail of details.items) {
-      const frameEl = this._dom.createChildOf(
-        filmstripEl,
-        'div',
-        'lh-filmstrip__frame'
-      );
-      this._dom.createChildOf(frameEl, 'img', 'lh-filmstrip__thumbnail', {
-        src: thumbnail.data,
-        alt: `Screenshot`,
-      });
-    }
-    return filmstripEl;
-  }
-  */
-  /**
-   * @param {string} text
-   * @return {Element}
-   */
   static _renderCode(text) {
     return(<pre className="lh-code">{text}</pre>)
   }
